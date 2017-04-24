@@ -1,8 +1,6 @@
 class Factory
   def self.new(*args,&block)
-  	result = Class.new
-
-    result.class_eval do
+  	result = Class.new do
 
     	attr_accessor *args
 
@@ -13,7 +11,6 @@ class Factory
     	end
 
     	define_method :[] do |i_arg|
-    		p i_arg.class
     		variable = ''
     		variable = i_arg if (i_arg.instance_of? String)
     		variable = i_arg.to_s if (i_arg.instance_of? Symbol)
