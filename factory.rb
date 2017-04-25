@@ -1,22 +1,22 @@
 class Factory
   def self.new(*args,&block)
-  	result = Class.new do
+    result = Class.new do
 
-    	attr_accessor *args
+      attr_accessor *args
 
-    	define_method :initialize do |*i_args|
-				for i in 0...(args.length)
- 					instance_variable_set("@#{args[i].to_s}","#{i_args[i].to_s}")
-				end
-    	end
+      define_method :initialize do |*i_args|
+        for i in 0...(args.length)
+          instance_variable_set("@#{args[i].to_s}","#{i_args[i].to_s}")
+        end
+      end
 
-    	define_method :[] do |i_arg|
-    		variable = ''
-    		variable = i_arg if (i_arg.instance_of? String)
-    		variable = i_arg.to_s if (i_arg.instance_of? Symbol)
-    		variable = args[i_arg] if (i_arg.is_a? Integer)
-    		instance_variable_get("@#{variable}")
-    	end
+      define_method :[] do |i_arg|
+        variable = ''
+        variable = i_arg if (i_arg.instance_of? String)
+        variable = i_arg.to_s if (i_arg.instance_of? Symbol)
+        variable = args[i_arg] if (i_arg.is_a? Integer)
+        instance_variable_get("@#{variable}")
+      end
     end
     result.class_eval &block if block_given?
     result
