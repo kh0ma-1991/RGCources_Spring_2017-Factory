@@ -1,21 +1,22 @@
 class Factory
-  def self.new(*args,&block)
+  def self.new(*args, &block)
+    unless args.all? { |arg| arg.instance_of? Symbol }
+      raise NameError.new("identifier #{args.first} needs to be constant")
+    end
     result = Class.new do
-
       attr_accessor *args
-
       define_method :initialize do |*i_args|
-        for i in 0...(args.length)
-          instance_variable_set("@#{args[i].to_s}","#{i_args[i].to_s}")
+        if args.length != i_args.length
+          raise ArgumentError.new('factory size differs')
         end
+        args.each_with_index { |arg, index| send("#{arg}=", i_args[index]) }
       end
-
       define_method :[] do |i_arg|
-        variable = ''
-        variable = i_arg if (i_arg.instance_of? String)
-        variable = i_arg.to_s if (i_arg.instance_of? Symbol)
-        variable = args[i_arg] if (i_arg.is_a? Integer)
-        instance_variable_get("@#{variable}")
+        variable = (i_arg.is_a? Integer) ? args[i_arg] : i_arg
+        unless respond_to? variable.to_s
+          raise NameError.new("no member #{variable} in factory")
+        end
+        send(variable)
       end
     end
     result.class_eval &block if block_given?
